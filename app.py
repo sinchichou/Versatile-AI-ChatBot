@@ -21,7 +21,6 @@ def get_admin_account():
     config.read('set/key.ini')
     try:
         account = config['admin-account']['account']
-        print(account)
         return account
     except (KeyError, configparser.NoSectionError):
         return None
@@ -31,7 +30,6 @@ def get_admin_password():
     config.read('set/key.ini')
     try:
         password = config['admin-password']['password']
-        print(password)
         return password
     except (KeyError, configparser.NoSectionError):
         return None
@@ -42,34 +40,30 @@ def login():
     if request.method == 'POST':
         admin_account = get_admin_account()
         admin_password = get_admin_password()
-        print(admin_account)
-        print(admin_password)
         if admin_password is None or admin_account is None:
             return "無法讀取管理員憑證", 500
             
         username = request.values.get('username')
         password = request.values.get('password')
-        
-        print(username)
-        print(password) # password is None
 
         if username == admin_account and password == admin_password:
             return redirect(url_for('setting'))
-        # else:
-        #     return render_template('login.html')
+        else:
+            return render_template('login.html')
             
     return render_template('login.html')
 
-@app.route('/setting')
+@app.route('/setting', methods=['GET', 'POST'])
 def setting():
     if request.method == 'POST':
         groq_api = request.values.get("groq_api")
-        google_api = request.values.get("groq_api")
-        cse_id = request.values.get("groq_api")
+        google_api = request.values.get("google_api")
+        cse_id = request.values.get("cse_id")
         system_prompt = request.values.get("system_prompt")
+        return jsonify({"groq_api": groq_api, "google_api": google_api, "cse_id": cse_id, "system_prompt": system_prompt}), 200
     else:
         return render_template('setting.html')
-    return groq_api, google_api, cse_id, system_prompt
+    # return groq_api, google_api, cse_id, system_prompt
 
 @app.route('/server/user/input', methods=['POST'])
 def upload_data():
