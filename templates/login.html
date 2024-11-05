@@ -1,6 +1,8 @@
 <style>
+    /* 基本樣式 */
     form {
         max-width: 400px;
+        width: 90%;
         margin: 50px auto;
         padding: 20px;
         border-radius: 8px;
@@ -17,17 +19,17 @@
 
     input {
         width: 100%;
-        padding: 8px;
+        padding: 12px;
         margin-bottom: 15px;
         border: 1px solid #ddd;
         border-radius: 4px;
         box-sizing: border-box;
-        font-size: 14px;
+        font-size: 16px;
     }
 
     button {
         width: 100%;
-        padding: 10px;
+        padding: 12px;
         background-color: #4CAF50;
         color: white;
         border: none;
@@ -39,13 +41,32 @@
     button:hover {
         background-color: #45a049;
     }
+
+    /* 手機版適配 */
+    @media screen and (max-width: 480px) {
+        form {
+            width: 95%;
+            margin: 20px auto;
+            padding: 15px;
+        }
+
+        input {
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 10px;
+            font-size: 14px;
+        }
+    }
 </style>
 
 <form method='post' action='/login'>
     <label for="username">用戶名稱:</label>
     <input type='text' name='username' id='username' placeholder='請輸入用戶名稱' />
     <label for="password">密碼:</label>
-    <input type='text' name='password' id='password' placeholder='請輸入用戶名稱密碼' />
+    <input type='password' name='password' id='password' placeholder='請輸入密碼' />
     <br/>
     <button type='submit'>提交</button>
 </form>
