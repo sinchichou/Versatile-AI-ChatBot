@@ -66,10 +66,10 @@ class AIChatLibrary:
                 }
             ],
             "generationConfig": {
-                "temperature": temperature,  # 調整生成內容的隨機性
-                "topK": topK,         # 限制考慮的最高概率的詞彙數量
-                "topP": topP,        # 使用核取樣來控制生成的多樣性
-                "maxOutputTokens": maxOutputTokens,  # 限制生成的最大字元數
+                "temperature": temperature,             # 調整生成內容的隨機性
+                "topK": topK,                           # 限制考慮的最高概率的詞彙數量
+                "topP": topP,                           # 使用核取樣來控制生成的多樣性
+                "maxOutputTokens": maxOutputTokens,     # 限制生成的最大字元數
                 "responseMimeType": "application/json"  # 設定回應的 MIME 類型
             }
         }

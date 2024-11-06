@@ -80,8 +80,10 @@ def setting():
         with open('set/key.ini', 'w', encoding='utf-8') as configfile:
             config.write(configfile)
             
-        return jsonify({"groq_api": groq_api, "google_api": google_api, 
-                        "cse_id": cse_id, "system_prompt": system_prompt, 
+        return jsonify({"groq_api": groq_api, 
+                        "google_api": google_api, 
+                        "cse_id": cse_id, 
+                        "system_prompt": system_prompt, 
                         "Grounding_Google_Search_api": Grounding_Google_Search_api,
                         "temperature": temperature, 
                         "topK": topK, 
