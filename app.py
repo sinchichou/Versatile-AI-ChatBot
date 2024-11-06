@@ -59,20 +59,34 @@ def setting():
         groq_api = request.values.get("groq_api")
         google_api = request.values.get("google_api")
         cse_id = request.values.get("cse_id")
+        Grounding_Google_Search_api = request.values.get("Grounding_Google_Search_api")
         system_prompt = request.values.get("system_prompt")
-        # 新增Grounding with Google Search api
+        temperature = request.values.get("temperature")
+        topK = request.values.get("topK")
+        topP = request.values.get("topP")
+        maxOutputTokens = request.values.get("maxOutputTokens")
         
         # 寫入設定到 key.ini
         config['groq-api'] = {'api': groq_api}
         config['google-api'] = {'api': google_api}
         config['cse-id'] = {'id': cse_id}
         config['system-prompt'] = {'prompt': system_prompt}
-        # 新增Grounding with Google Search api
+        config['Grounding_Google_Search_api'] = {'api': Grounding_Google_Search_api}
+        config['Google-Search-ai'] = {"temperature" : temperature}
+        config['Google-Search-ai'] = {"topK" : topK}
+        config['Google-Search-ai'] = {"topP" : topP}
+        config['Google-Search-ai'] = {"maxOutputTokens" : maxOutputTokens}
         
         with open('set/key.ini', 'w', encoding='utf-8') as configfile:
             config.write(configfile)
             
-        return jsonify({"groq_api": groq_api, "google_api": google_api, "cse_id": cse_id, "system_prompt": system_prompt}), 200
+        return jsonify({"groq_api": groq_api, "google_api": google_api, 
+                        "cse_id": cse_id, "system_prompt": system_prompt, 
+                        "Grounding_Google_Search_api": Grounding_Google_Search_api,
+                        "temperature": temperature, 
+                        "topK": topK, 
+                        "topP": topP, 
+                        "maxOutputTokens": maxOutputTokens}), 200
     else:
         return render_template('setting.html')
 
