@@ -72,10 +72,10 @@ def setting():
         config['cse-id'] = {'id': cse_id}
         config['system-prompt'] = {'prompt': system_prompt}
         config['Grounding_Google_Search_api'] = {'api': Grounding_Google_Search_api}
-        config['Google-Search-ai'] = {"temperature" : temperature}
-        config['Google-Search-ai'] = {"topK" : topK}
-        config['Google-Search-ai'] = {"topP" : topP}
-        config['Google-Search-ai'] = {"maxOutputTokens" : maxOutputTokens}
+        config['Google-Search-ai-temperature'] = {"temperature" : temperature}
+        config['Google-Search-ai-topK'] = {"topK" : topK}
+        config['Google-Search-ai-topP'] = {"topP" : topP}
+        config['Google-Search-ai-maxOutputTokens'] = {"maxOutputTokens" : maxOutputTokens}
         
         with open('set/key.ini', 'w', encoding='utf-8') as configfile:
             config.write(configfile)

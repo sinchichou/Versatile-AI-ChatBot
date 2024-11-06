@@ -14,10 +14,10 @@ class AIChatLibrary:
         self.system_prompt = config['system-prompt']['prompt']
         self.client = Groq(api_key=self.groq_api)  
         self.Grounding_Google_Search_api = config['Grounding_Google_Search_api']['api']
-        self.temperture = config['Google-Search-ai']['temperature']
-        self.topK = config['Google-Search-ai']['topK']
-        self.topP = config['Google-Search-ai']['topP']
-        self.maxOutputTokens = config['Google-Search-ai']['maxOutputTokens']
+        self.temperture = config['Google-Search-ai-temperature']['temperature']
+        self.topK = config['Google-Search-ai-topK']['topK']
+        self.topP = config['Google-Search-ai-topP']['topP']
+        self.maxOutputTokens = config['Google-Search-ai-maxOutputTokens']['maxOutputTokens']
         return self 
         #.groq_api, self.google_api, self.cse_id, self.system_prompt, self.Grounding_Google_Search_api, self.temperture   
     
@@ -48,10 +48,10 @@ class AIChatLibrary:
         return chat.choices[0].message.content
 
     # 使用Grounding with Google Search生成回答
-    def google_search(self, input_text, temperature, topK, topP, maxOutputTokens):
+    def google_search(seif, input_text, temperature, topK, topP, maxOutputTokens, Grounding_Google_Search_api):
         # 設定 API_KEY 和請求 URL
-        API_KEY = "YOUR_API_KEY"  # 請將此處替換為您的實際 API 金鑰
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-002:generateContent?key={API_KEY}"
+        # 請將此處替換為您的實際 API 金鑰
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-002:generateContent?key=${Grounding_Google_Search_api}"
 
         # 設定請求的內容資料
         data = {
