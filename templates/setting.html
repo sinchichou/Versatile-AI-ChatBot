@@ -31,6 +31,14 @@
             border: 1px solid #ddd;
             border-radius: 4px;
         }
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #fff;
+            font-size: 16px;
+        }
         .submit-btn {
             background-color: #4CAF50;
             color: white;
@@ -65,12 +73,6 @@
                 <input type="text" id="cse_id" name="cse_id" placeholder="請輸入 Google Search CSE ID">
                 <small>由 Google 程式化搜尋引擎介面複製</small>
             </div>
-        
-            <div class="form-group">
-                <label for="Grounding_Google_Search_api">Grounding Google Search api 金鑰</label>
-                <input type="text" id="Grounding_Google_Search_api" name="Grounding_Google_Search_api" placeholder="請輸入 Grounding Google Search api 金鑰">
-                <small>請至 Google AI Studio 設定</small>
-            </div>
 
             <div class="form-group">
                 <label for="system_prompt">系統提示詞</label>
@@ -79,28 +81,15 @@
             </div>
 
             <div class="form-group">
-                <label for="temperature">生成溫度</label>
-                <input type="text" id="temperature" name="temperature" placeholder="請輸入生成溫度">
-                <small>限制考慮的最高概率的詞彙數量</small>
+                <label for="chat_model">選擇模型</label>
+                <select id="chat_model" name="chat_model">
+                    {% for model in models %}
+                        <option value="{{ model.id }}">{{ model.id }}</option>
+                    {% endfor %}
+                </select>
+                <small>請選擇要使用的模型</small>
             </div>
 
-            <div class="form-group">
-                <label for="topK">Top K</label>
-                <input type="text" id="topK" name="topK" placeholder="請輸入 Top K">
-                <small>限制生成的最大字元數</small>
-            </div>
-
-            <div class="form-group">
-                <label for="topP">Top P</label>
-                <input type="text" id="topP" name="topP" placeholder="請輸入 Top P">
-                <small>使用核取樣來控制生成的多樣性</small>
-            </div>
-
-            <div class="form-group">
-                <label for="maxOutputTokens">最大輸出字元數</label>
-                <input type="text" id="maxOutputTokens" name="maxOutputTokens" placeholder="請輸入最大輸出字元數">
-            </div>
-            
             <button type="submit" class="submit-btn">儲存設定</button>
         </form>
     </div>

@@ -1,8 +1,9 @@
 import os
-import cv2
 import sys
-import time
 import configparser
+import requests
+import os
+import json
 sys.path.append(os.path.join(os.path.dirname(__file__), 'lib'))
 from chat import AIChatLibrary
 from image_clean_up import ImageCleanUp
@@ -26,13 +27,29 @@ def get_admin_account():
         return None
 
 def get_admin_password():
-    
     config.read('set/key.ini', encoding='utf-8')
     try:
         password = config['admin-password']['password']
         return password
     except (KeyError, configparser.NoSectionError):
         return None
+
+def get_groq_models_list():
+    groq_api = config['groq']['api']
+    url = "https://api.groq.com/openai/v1/models"
+
+    headers = {
+        "Authorization": f"Bearer {groq_api}",
+        "Content-Type": "application/json"
+    }
+
+    response = requests.get(url, headers=headers)
+    result_list = [{"id": model["id"], "owned_by": model["owned_by"], "active": model["active"]} for model in response.json()["data"]]
+    return result_list
+
+@app.route('/')
+def index():    
+    return redirect(url_for('login'))
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -55,42 +72,41 @@ def login():
 
 @app.route('/setting', methods=['GET', 'POST'])
 def setting():
-    if request.method == 'POST':
-        groq_api = request.values.get("groq_api")
-        google_api = request.values.get("google_api")
-        cse_id = request.values.get("cse_id")
-        Grounding_Google_Search_api = request.values.get("Grounding_Google_Search_api")
-        system_prompt = request.values.get("system_prompt")
-        temperature = request.values.get("temperature")
-        topK = request.values.get("topK")
-        topP = request.values.get("topP")
-        maxOutputTokens = request.values.get("maxOutputTokens")
-        
-        # 寫入設定到 key.ini
+    if request.method != 'POST':
+        # 取得模型列表並傳送到網頁
+        config.read('set/key.ini', encoding='utf-8')
+        groq_api = config['groq']['api']
+        if groq_api == "":
+            return render_template('setting.html')
+        result_list = get_groq_models_list()
+        return render_template('setting.html', models=result_list)
+    
+    groq_api = request.values.get("groq_api")
+    google_api = request.values.get("google_api")
+    cse_id = request.values.get("cse_id")
+    chat_model = request.values.get("chat_model")
+    system_prompt = request.values.get("system_prompt")
+    # 寫入設定到 key.ini
+    config['google-api'] = {'api': google_api}
+    config['cse-id'] = {'id': cse_id}
+    config['system-prompt'] = {'prompt': system_prompt}
+    if chat_model != "":
+        config['chat-model'] = {'model': str(chat_model)}
+
+    if groq_api != "":
         config['groq-api'] = {'api': groq_api}
-        config['google-api'] = {'api': google_api}
-        config['cse-id'] = {'id': cse_id}
-        config['system-prompt'] = {'prompt': system_prompt}
-        config['Grounding_Google_Search_api'] = {'api': Grounding_Google_Search_api}
-        config['Google-Search-ai-temperature'] = {"temperature" : temperature}
-        config['Google-Search-ai-topK'] = {"topK" : topK}
-        config['Google-Search-ai-topP'] = {"topP" : topP}
-        config['Google-Search-ai-maxOutputTokens'] = {"maxOutputTokens" : maxOutputTokens}
-        
-        with open('set/key.ini', 'w', encoding='utf-8') as configfile:
-            config.write(configfile)
+        config['groq'] = {'api': groq_api}
+
+
+    with open('set/key.ini', 'w', encoding='utf-8') as configfile:
+        config.write(configfile)
             
-        return jsonify({"groq_api": groq_api, 
+    return jsonify({"groq_api": groq_api, 
                         "google_api": google_api, 
                         "cse_id": cse_id, 
                         "system_prompt": system_prompt, 
-                        "Grounding_Google_Search_api": Grounding_Google_Search_api,
-                        "temperature": temperature, 
-                        "topK": topK, 
-                        "topP": topP, 
-                        "maxOutputTokens": maxOutputTokens}), 200
-    else:
-        return render_template('setting.html')
+                        "chat_model": chat_model, 
+                        }), 200
 
 @app.route('/ai-api/text', methods=['POST'])
 def upload_data():
