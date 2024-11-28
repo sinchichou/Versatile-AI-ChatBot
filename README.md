@@ -4,9 +4,6 @@
 
 Aiming to enable iPhones that do not support Apple Intelligence to use AI functions
 
-> [!WARNING]  
-> 最近要段考 之後更新
-
 > [!IMPORTANT]  
 > 1.支援搜尋網路  
 > 2.移除圖片雜物  
