@@ -1,5 +1,9 @@
 import configparser
+import requests
+from json import *
+from requests import *
 from groq import Groq
+from scrapling import Fetcher, StealthyFetcher, PlayWrightFetcher
 
 config = configparser.ConfigParser()
 
@@ -9,21 +13,9 @@ class AIChatLibrary:
         self.system_prompt = config['system-prompt']['prompt']
         self.chat_model = config['chat-model']['model']
         self.client = Groq(api_key=groq_api)  
+        self.google_api = config['google-api']['api']
+        self.cse_id = config['cse-id']['id']
         return self
-    
-    # 製作計畫
-    # def making_todo(self, input_text):
-    #     making_todo = self.client.chat.completions.create(
-    #         messages=[
-    #             {
-    #                 "role": "user",
-    #                 "content": "1. Create a problem-solving process 2. Develop a solution plan" + {input_text},
-    #             }
-    #         ],
-    #         model="gemma-7b-it",
-    #         max_tokens=8192,
-    #     )
-    #     return making_todo.choices[0].message.content
 
     def chat(self, input_text, text_list):
         chat = self.client.chat.completions.create(
@@ -41,3 +33,15 @@ class AIChatLibrary:
     def log(self, reply):
         with open('example.txt', 'w', encoding='utf-8') as file:
             file.write(reply + "\n\n")
+
+    def google_search(self, query):
+        url = "https://www.googleapis.com/customsearch/v1"
+        params = {
+            'key': self.google_api,  # 替換為你的API金鑰
+            'cx': self.cse_id,     # 替換為你的自定義搜尋引擎ID
+            'q': query
+        }
+        response = requests.get(url, params=params)
+        results = response.json().get('items', [])
+        return [item['link'] for item in results]
+       
