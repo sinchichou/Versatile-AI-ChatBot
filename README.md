@@ -46,7 +46,7 @@ Aiming to enable iPhones that do not support Apple Intelligence to use AI functi
 
 Clone此倉庫 / Clone this repository:
 
-	git clone https://github.com/username/repository-name.git
+	git clone https://github.com/sinchichou/Versatile-AI-ChatBot.git
  
 ### 安裝相依套件 / Install dependencies:
 
