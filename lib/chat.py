@@ -1,6 +1,5 @@
 import configparser
 import requests
-from json import *
 from requests import *
 from groq import Groq
 from scrapling import Fetcher, StealthyFetcher, PlayWrightFetcher
@@ -48,5 +47,6 @@ class AIChatLibrary:
         url = "https://www.google.com/search?"
         q_key = query
         default_key = "&sourceid=chrome&ie=UTF-8"
-        response = requests.get(url + 'q=' + q_key + default_key)
+        page = StealthyFetcher.fetch(url + 'q=' + q_key + default_key)
+        page.find_all('div', id_="search")
         
