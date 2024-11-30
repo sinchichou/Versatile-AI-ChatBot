@@ -43,10 +43,11 @@ class AIChatLibrary:
     #     response = requests.get(url, params=params)
     #     results = response.json().get('items', [])
     #     return [item['link'] for item in results]
-    def search(query):
+
+    def search(self, query):
         url = "https://www.google.com/search?"
         q_key = query
         default_key = "&sourceid=chrome&ie=UTF-8"
-        page = StealthyFetcher.fetch(url + 'q=' + q_key + default_key)
+        page = StealthyFetcher().fetch(url=f"{url}q={q_key}{default_key}")
         page.find_all('div', id_="search")
         
