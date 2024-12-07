@@ -130,14 +130,14 @@ def upload_data():
         admin_account = get_admin_account()
         admin_password = get_admin_password()
         if admin_password is None or admin_account is None:
-            return "account or password can not benn read", 500
+            return "Account or password cannot be read", 500
         account = request.values.get('account')
-        password = request.values.get('password')  
-        if account != admin_account and password != admin_password:
-            return "account or password error"
-        input_text = request.values.get('qution')
-        print(input_text)
-    return 200
+        password = request.values.get('password')
+        if account != admin_account or password != admin_password:
+            return "Account or password error", 401  # 401 表示未經授權
+        input_text = request.values.get('text')
+        # print(input_text)
+    return "Success", 200
 
 if __name__ == '__main__':
     app.run(debug=True)
