@@ -81,6 +81,8 @@ def setting():
         result_list = get_groq_models_list()
         return render_template('setting.html', models=result_list)
     
+    admin_account = get_admin_account()
+    admin_password = get_admin_password()
     groq_api = request.values.get("groq_api")
     google_api = request.values.get("google_api")
     cse_id = request.values.get("cse_id")
@@ -90,6 +92,9 @@ def setting():
     config['google-api'] = {'api': google_api}
     config['cse-id'] = {'id': cse_id}
     config['system-prompt'] = {'prompt': system_prompt}
+    config['admin-account'] = {'account': admin_account}
+    config['admin-password'] = {'password': admin_password}
+
     if chat_model != "":
         config['chat-model'] = {'model': str(chat_model)}
 
@@ -101,21 +106,38 @@ def setting():
     with open('set/key.ini', 'w', encoding='utf-8') as configfile:
         config.write(configfile)
             
-    return jsonify({"groq_api": groq_api, 
-                        "google_api": google_api, 
-                        "cse_id": cse_id, 
-                        "system_prompt": system_prompt, 
-                        "chat_model": chat_model, 
-                        }), 200
+    return render_template('setting.html', 
+                           groq_api=groq_api, 
+                           google_api=google_api, 
+                           cse_id=cse_id, 
+                           system_prompt=system_prompt, 
+                           chat_model=chat_model, 
+                           message="設定已儲存！"), 200
 
+    # return jsonify({"groq_api": groq_api, 
+    #                     "google_api": google_api, 
+    #                     "cse_id": cse_id, 
+    #                     "system_prompt": system_prompt, 
+    #                     "chat_model": chat_model, 
+    #                     }), 200
+
+# need to fix
 @app.route('/ai-api/text', methods=['POST'])
 def upload_data():
-    global input_text, input_image
-    
+    global input_text
     # 取得請求中的 JSON 資料
-    data = request.json
-    
-    
+    if request.method == 'POST':
+        admin_account = get_admin_account()
+        admin_password = get_admin_password()
+        if admin_password is None or admin_account is None:
+            return "account or password can not benn read", 500
+        account = request.values.get('account')
+        password = request.values.get('password')  
+        if account != admin_account and password != admin_password:
+            return "account or password error"
+        input_text = request.values.get('qution')
+        print(input_text)
+    return 200
 
 if __name__ == '__main__':
     app.run(debug=True)

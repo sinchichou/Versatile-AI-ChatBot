@@ -1,8 +1,8 @@
 import configparser
 import requests
+import json
 from requests import *
 from groq import Groq
-from scrapling import Fetcher, StealthyFetcher, PlayWrightFetcher
 
 config = configparser.ConfigParser()
 
@@ -33,21 +33,26 @@ class AIChatLibrary:
         with open('example.txt', 'w', encoding='utf-8') as file:
             file.write(reply + "\n\n")
 
-    # def google_search(self, query):
-    #     url = "https://www.googleapis.com/customsearch/v1"
-    #     params = {
-    #         'key': self.google_api,  # 替換為你的API金鑰
-    #         'cx': self.cse_id,     # 替換為你的自定義搜尋引擎ID
-    #         'q': query
-    #     }
-    #     response = requests.get(url, params=params)
-    #     results = response.json().get('items', [])
-    #     return [item['link'] for item in results]
+    def get_webpage(self, url):
+        response = requests.get(url)
+        return response.text  # 返回網頁的內文
 
-    def search(self, query):
-        url = "https://www.google.com/search?"
-        q_key = query
-        default_key = "&sourceid=chrome&ie=UTF-8"
-        page = StealthyFetcher().fetch(url=f"{url}q={q_key}{default_key}")
-        page.find_all('div', id_="search")
+    def google_search(self, query):
+        url = "https://www.googleapis.com/customsearch/v1"
+        params = {
+            'key': self.google_api,  # 替換為你的API金鑰
+            'cx': self.cse_id,     # 替換為你的自定義搜尋引擎ID
+            'q': query
+        }
+        response = requests.get(url, params=params)
+        results = response.json().get('items', [])
+        links = [item['link'] for item in results]
+        
+        # 下載每個網址的內文
+        contents = []
+        for link in links:
+            content = self.get_webpage(link)
+            contents.append(content)
+        return contents
+
         
