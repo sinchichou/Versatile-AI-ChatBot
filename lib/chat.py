@@ -1,13 +1,15 @@
 import configparser
 import requests
 import json
+import re
+from datetime import datetime
 from requests import *
 from groq import Groq
 
 config = configparser.ConfigParser()
 
 class AIChatLibrary:
-    def get_set(self, groq_api):          
+    def __init__(self, groq_api):          
         config.read('set/key.ini', encoding='utf-8')
         self.system_prompt = config['system-prompt']['prompt']
         self.chat_model = config['chat-model']['model']
@@ -33,26 +35,82 @@ class AIChatLibrary:
         with open('example.txt', 'w', encoding='utf-8') as file:
             file.write(reply + "\n\n")
 
-    def get_webpage(self, url):
-        response = requests.get(url)
-        return response.text  # 返回網頁的內文
-
     def google_search(self, query):
+        """
+        Use Google Custom Search Engine to search and download relevant webpage content.
+        """
         url = "https://www.googleapis.com/customsearch/v1"
         params = {
-            'key': self.google_api,  # 替換為你的API金鑰
-            'cx': self.cse_id,     # 替換為你的自定義搜尋引擎ID
+            'key': self.google_api,
+            'cx': self.cse_id,
             'q': query
         }
-        response = requests.get(url, params=params)
-        results = response.json().get('items', [])
-        links = [item['link'] for item in results]
-        
-        # 下載每個網址的內文
-        contents = []
-        for link in links:
-            content = self.get_webpage(link)
-            contents.append(content)
-        return contents
 
-        
+        try:
+            response = requests.get(url, params=params)
+            response.raise_for_status()
+            results = response.json().get('items', [])
+            links = [item['link'] for item in results]
+
+            # Download the content of each URL
+            contents = []
+            for link in links:
+                content = self.get_webpage(link)
+                contents.append(content)
+            return contents
+
+        except requests.RequestException as e:
+            print(f"Search request failed: {e}")
+            return []
+
+    def get_webpage(self, url):
+        """
+        Get the content of the specified URL.
+        """
+        try:
+            response = requests.get(url)
+            response.raise_for_status()
+            return response.text
+        except requests.RequestException as e:
+            print(f"Unable to download webpage content: {e}")
+            return ""
+    # need to fix
+    # the keywords list need to updata and add more
+    # need to add the download function
+    @staticmethod
+    def needs_search(query, knowledge_cutoff_date, current_date):
+        """
+        Determine if a search is needed.
+        """
+        # 1. Check if real-time information is mentioned
+        if any(keyword in query.lower() for keyword in ['現在', '即時', '今天', '目前']): # need to add 12/7
+            return True
+
+        # 2. Check if a specific date is mentioned and if it exceeds the knowledge cutoff date
+        date_patterns = [r'\d{4}[-/]\d{1,2}[-/]\d{1,2}', r'\b\d{1,2}月\d{1,2}日\b']
+        for pattern in date_patterns:
+            match = re.search(pattern, query)
+            if match:
+                try:
+                    # Try to parse the date
+                    query_date = datetime.strptime(match.group(), "%Y-%m-%d")
+                    if query_date > knowledge_cutoff_date:
+                        return True
+                except ValueError:
+                    pass  # Ignore if the date format cannot be parsed
+
+        # 3. Check for unknown terms or proper nouns
+        unknown_keywords = ['新技術', '最新工具', '未定義詞']
+        if any(keyword in query.lower() for keyword in unknown_keywords):
+            return True
+
+        # 4. If it is unrelated to knowledge but mentions websites or needs to download
+        if any(keyword in query.lower() for keyword in ['下載', '網頁', '網站', '連結']):
+            return True
+
+        # Default to not needing a search
+        return False
+    
+    # Define data time 
+    knowledge_cutoff_date = datetime(2023, 10, 1)  # Model training cutoff date. for check the Groq API model list, on app.py function "get_groq_models_list"
+    current_date = datetime.now()
