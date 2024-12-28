@@ -7,7 +7,7 @@ import json
 sys.path.append(os.path.join(os.path.dirname(__file__), 'lib'))
 from chat import AIChatLibrary
 from image_clean_up import ImageCleanUp
-from flask import Flask, jsonify, request, render_template, redirect, url_for
+from flask import Flask, jsonify, request, render_template, redirect, url_for, send_from_directory
 
 # Initialize Flask application and required classes
 app = Flask(__name__)
@@ -46,6 +46,11 @@ def get_groq_models_list():
     response = requests.get(url, headers=headers)
     result_list = [{"id": model["id"], "owned_by": model["owned_by"], "active": model["active"]} for model in response.json()["data"]]
     return result_list
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                             'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 @app.route('/')
 def index():    

@@ -6,7 +6,7 @@
         margin: 50px auto;
         padding: 20px;
         border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         background-color: #fff;
     }
 
@@ -62,11 +62,15 @@
     }
 </style>
 
+<head>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+
 <form method='post' action='/login'>
     <label for="username">用戶名稱:</label>
     <input type='text' name='username' id='username' placeholder='請輸入用戶名稱' />
     <label for="password">密碼:</label>
     <input type='password' name='password' id='password' placeholder='請輸入密碼' />
-    <br/>
+    <br />
     <button type='submit'>提交</button>
 </form>

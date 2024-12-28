@@ -5,6 +5,7 @@ import re
 from datetime import datetime
 from requests import *
 from groq import Groq
+import onnxruntime as ort
 
 config = configparser.ConfigParser()
 
@@ -18,7 +19,7 @@ class AIChatLibrary:
         self.cse_id = config['cse-id']['id']
         return self
 
-    def chat(self, input_text, text_list):
+    def chat_online_model(self, input_text, text_list):
         chat = self.client.chat.completions.create(
             messages=[
                 {
@@ -31,6 +32,16 @@ class AIChatLibrary:
         )
         return chat.choices[0].message.content
 
+    # locat LLM 
+    # using ONNX --> AMD GPU, NPU
+    # input  --> input_text
+    # output --> output_text
+    def chat_locat(self, input_text):
+        session = ort.InferenceSession("model.onnx")
+        inputs = {"input_name": input_text}
+        output_text = session.run(None, inputs)
+        return output_text
+    
     def log(self, reply):
         with open('example.txt', 'w', encoding='utf-8') as file:
             file.write(reply + "\n\n")
@@ -77,6 +88,7 @@ class AIChatLibrary:
     # need to fix
     # the keywords list need to updata and add more
     # need to add the download function
+    
     @staticmethod
     def needs_search(query, knowledge_cutoff_date, current_date):
         """
