@@ -7,3 +7,7 @@ numpy--de
 lama-cleaner
 Pillow
 Flask
+transformers
+onnxruntime
+configparser
+optimum[exporters]
