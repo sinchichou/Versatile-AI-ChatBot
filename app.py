@@ -4,9 +4,8 @@ import configparser
 import requests
 import os
 import json
-sys.path.append(os.path.join(os.path.dirname(__file__), 'lib'))
-from chat import AIChatLibrary
-from image_clean_up import ImageCleanUp
+from lib.chat import AIChatLibrary
+from lib.image_clean_up import ImageCleanUp
 from flask import Flask, jsonify, request, render_template, redirect, url_for, send_from_directory
 
 # Initialize Flask application and required classes
