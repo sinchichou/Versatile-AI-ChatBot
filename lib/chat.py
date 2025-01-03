@@ -1,16 +1,19 @@
 import configparser
 import requests
 import json
+import set.set
 import re
 from datetime import datetime
 from requests import *
 from groq import Groq
 import onnxruntime as ort
+from optimum.onnxruntime import ORTModelForSequenceClassification
+from transformers import AutoTokenizer
 
 config = configparser.ConfigParser()
 
 class AIChatLibrary:
-    def __init__(self, groq_api):          
+    def __init__(self, groq_api):
         config.read('set/key.ini', encoding='utf-8')
         self.system_prompt = config['system-prompt']['prompt']
         self.chat_model = config['chat-model']['model']
@@ -41,6 +44,17 @@ class AIChatLibrary:
         inputs = {"input_name": input_text}
         output_text = session.run(None, inputs)
         return output_text
+    
+    def transformers2onnx():
+        model_checkpoint = "distilbert_base_uncased_squad"  # download model transformers to onnx
+
+        # Load a model from transformers and export it to ONNX
+        ort_model = ORTModelForSequenceClassification.from_pretrained(model_checkpoint, export=True)
+        tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
+
+        # Save the onnx model and tokenizer
+        ort_model.save_pretrained(save_directory)
+        tokenizer.save_pretrained(save_directory)
     
     def log(self, reply):
         with open('example.txt', 'w', encoding='utf-8') as file:
