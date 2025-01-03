@@ -1,6 +1,5 @@
 import configparser
 import requests
-import json
 import re
 from datetime import datetime
 from requests import *
@@ -33,7 +32,7 @@ class AIChatLibrary:
         return chat.choices[0].message.content
 
     # locat LLM 
-    # using ONNX --> AMD GPU, NPU
+    # using ONNX --> GPU
     # input  --> input_text
     # output --> output_text
     def chat_locat(self, input_text):

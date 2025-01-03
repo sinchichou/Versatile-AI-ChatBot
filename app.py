@@ -1,12 +1,10 @@
 import os
-import sys
 import configparser
 import requests
 import os
 import json
-sys.path.append(os.path.join(os.path.dirname(__file__), 'lib'))
-from chat import AIChatLibrary
-from image_clean_up import ImageCleanUp
+from lib.chat import AIChatLibrary
+from lib.image_clean_up import ImageCleanUp
 from flask import Flask, jsonify, request, render_template, redirect, url_for, send_from_directory
 
 # Initialize Flask application and required classes
@@ -93,12 +91,16 @@ def setting():
     cse_id = request.values.get("cse_id")
     chat_model = request.values.get("chat_model")
     system_prompt = request.values.get("system_prompt")
+    # ADD LocalModel
+    local_model = request.values.get("local_model")
     # Write settings to key.ini
     config['google-api'] = {'api': google_api}
     config['cse-id'] = {'id': cse_id}
     config['system-prompt'] = {'prompt': system_prompt}
     config['admin-account'] = {'account': admin_account}
     config['admin-password'] = {'password': admin_password}
+    # ADD LocalModel
+    config['local-model'] = {'LocalModel': local_model}
 
     if chat_model != "":
         config['chat-model'] = {'model': str(chat_model)}
@@ -110,21 +112,25 @@ def setting():
 
     with open('set/key.ini', 'w', encoding='utf-8') as configfile:
         config.write(configfile)
-            
-    return render_template('setting.html', 
-                           groq_api=groq_api, 
-                           google_api=google_api, 
-                           cse_id=cse_id, 
-                           system_prompt=system_prompt, 
-                           chat_model=chat_model, 
-                           message="Settings have been saved!"), 200
 
-    # return jsonify({"groq_api": groq_api, 
-    #                     "google_api": google_api, 
-    #                     "cse_id": cse_id, 
-    #                     "system_prompt": system_prompt, 
-    #                     "chat_model": chat_model, 
-    #                     }), 200
+    # Add local models setting
+    
+        
+    
+            
+    # 更新設定檔
+    with open('set/key.ini', 'w', encoding='utf-8') as configfile:
+        config.write(configfile)
+        
+    return render_template('setting.html',
+                         groq_api=groq_api,
+                         google_api=google_api,
+                         cse_id=cse_id,
+                         system_prompt=system_prompt,
+                         chat_model=chat_model,
+                        #  local_model=local_model,
+                         message="設定已儲存!"), 200
+
 
 @app.route('/ai-api/text', methods=['POST'])
 def upload_data():
@@ -139,7 +145,8 @@ def upload_data():
         password = request.values.get('password')
         if account != admin_account or password != admin_password:
             return {"message": "Account or password error"}, 401  # 401 indicates unauthorized
-        input_text = request.values.get('text')
+        input_text = request.values.get('text') # api post
+        AIChatLibrary.chat_locat(input_text)
         # print(input_text)
     return {"message":"Success", 
             "input_text":input_text}, 200
